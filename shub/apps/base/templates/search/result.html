@@ -1,0 +1,34 @@
+{% load staticfiles %}
+{% include "style/search.html" %}
+
+                        {% if results|length %}
+                        <table>
+                            <tr class="even">
+                                <td colspan="4" class="right">
+                                    <strong>Found {{ results|length }} collections</strong>
+                                </td>
+                            </tr>
+ 
+                            {% for collection in results %}
+                            <tr class="{% cycle 'odd' 'even' %}">
+                                <td><strong>{{ forloop.counter }}.</strong></td>
+                                <td><a href="{{ collection.get_absolute_url }}">{{ collection.name }}</a><br/>
+                                    <span class="hint">Containers: <a href="{{ collection.get_absolute_url }}">
+                                        {{ collection.containers.count }}</a></span>
+                                </td>
+                                <td>
+                                  <a href="{% url 'collection_details' collection.id %}">
+                                </td>
+                                <td class="right">
+                                    <span class="hint">
+                                    Modified Date {{ collection.modify_date }} <br/>
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </table>
+                          {% else %}
+                          <div class="note">
+                              Your search yielded no results
+                          </div>
+                          {% endif %}

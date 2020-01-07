@@ -1,0 +1,72 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center"
+         style='padding-bottom:100px'>
+      <div class="col-md-12 p-lg-5 mx-auto my-12" style="margin-bottom: 80px">
+<div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+      <h1 class="display-4">{% if REGISTRY_NAME %}{{ REGISTRY_NAME }}{% else %}Make containers, run, done.{% endif %}</h1>
+      <p class="lead">Your Open Source Registry for <a href="http://singularity.lbl.gov/" target="_blank"> Singularity</a> containers.</p>
+</div>
+      </div>
+    </div>
+
+<div id="fh5co-portfolio">
+
+<!-- Package your analysis -->
+<div class="fh5co-portfolio-item ">
+    <div class="fh5co-portfolio-figure animate-box" style="background-image: url(static/img/robot_package.png); background-size: 300px 300px;"></div>
+    <div class="fh5co-portfolio-description">
+        <h2>Package your Analysis</h2>
+        <p>Whether you are working from your own computer, or a cluster environment, you can capture your analysis components and save them to <a href="https://singularityware.github.io" target="_blank">reproducible containers</a></p>
+        <p><a href="{% url 'collections' %}" 
+              class="btn btn-primary">View Collections</a></p>
+    </div>
+</div>
+
+<!-- Visualize Containers -->
+<div class="fh5co-portfolio-item fh5co-img-right">
+    <div class="fh5co-portfolio-figure animate-box" style="background-image: url(static/img/robot_vision.png); background-size: 350px 350px;"></div>
+    <div class="fh5co-portfolio-description">
+        <h2>Visualize your containers</h2>
+        <p>The registry provides a summary view for comparison of its containers.</p>
+        <p><a href="{% url 'containers_treemap' %}" 
+              target="_blank"
+              class="btn btn-primary">See the Registry</a></p>
+    </div>
+</div>
+
+<!-- Contact -->
+<div class="fh5co-portfolio-item ">
+    <div class="fh5co-portfolio-figure animate-box" style="background-image: url(static/img/reproducible_robots.png); background-size: 370px 250px;"></div>
+    <div class="fh5co-portfolio-description">
+        <h2>Request a Build</h2>
+        <p>Want to have your container served by the registry {{ REGISTRY_URI }}?
+        {% if HELP_CONTACT_EMAIL %}
+        contact <a href="mailto:{{ HELP_CONTACT_EMAIL }}">{{ HELP_CONTACT_EMAIL }}</a>.
+        {% endif %} {% if HELP_INSTITUTION_SITE %}Learn more at <a href="{{ HELP_INSTITUTION_SITE }}">{{ HELP_INSTITUTION_SITE }}</a>{% endif %}
+        </p>
+        <p><a href="mailto:{{ HELP_CONTACT_EMAIL }}" 
+              class="btn btn-primary">Contact {{ REGISTRY_URI }}</a></p>
+    </div>
+</div>
+
+<!-- Deploy an Analysis -->
+<div class="fh5co-portfolio-item fh5co-img-right">
+    <div class="fh5co-portfolio-figure animate-box" style="background-image: url(static/img/hang10_robot.png); background-size: 300px 300px;"></div>
+    <div class="fh5co-portfolio-description">
+        <h2>Deploy an Analysis</h2>
+        <p>Containers provided by a Singularity Registry are immediately programatically accessible with the Singularity software, so you can access them to run custom analysis pipelines in your environment of choice.</p>
+        <p><a href="{% if 'google_build' in PLUGINS_ENABLED %}https://github.com/singularityhub/singularityhub.github.io/wiki/Build-A-Container{% else %}https://singularityhub.github.io/sregistry/client{% endif %}"
+              target="_blank" 
+              class="btn btn-primary">Deploy an Analysis</a></p>
+    </div>
+</div>
+
+
+</div>
+{% endblock %}
+{% block footer %}
+{% include 'main/footer.html' %}
+{% endblock %}

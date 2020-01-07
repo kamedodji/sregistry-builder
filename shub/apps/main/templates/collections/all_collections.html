@@ -1,0 +1,149 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load gravatar %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static "css/material-table.css"%}">
+<style>
+span.odd { background: #FFF; }
+span.even { background: rgba(91, 192, 222, 0.32); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% include 'messages/message.html' %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div style="padding:20px">
+            <div class="header" style="padding-bottom:10px">
+                   <h3 class="title">{% if my_collections %}
+                   {% gravatar user.email 90 %} <span style="padding-top:20px;padding-left:25px">My Collections</span>
+                    {% else %}
+                   <img src="{% static 'img/robot_package.png' %}" 
+                        width="160px" 
+                        style="position:relative;top:-5px;border-radius:35px; padding-right:10px;margin-right:10px"/>Collections
+                   {% endif %}</h3>
+            </div>
+        </div>    
+    </div>
+</div>
+
+<!-- Containers! -->
+<div class="row">
+    <div class="col-md-12">
+
+            <p>
+            A container is built via an authenticated push to the registry for a finished image built from a <a href="https://singularityware.github.io/" target="_blank">Singularity</a> File.
+            </p>
+            {% if request.user.is_authenticated %}
+
+                {% if request.user.has_create_permission %}                
+                <a id="new-container" 
+                   href="{% url 'new_collection' %}"
+                   title="Create an empty collection to push containers to">
+                   <button class="btn btn-primary">New Collection</button></a>
+                {% endif %}
+
+                <button class="btn btn-light"><a href="{% url 'all_labels' %}">Labels</a></button>
+                <button class="btn btn-light"><a href="{% url 'collection_stars' %}">Rankings</a></button>
+                <button class="btn btn-light"><a href="{% url 'all_tags' %}">Topic Tags</a></button>
+
+            {% else %}
+            <p> Want to build containers?</p>
+            <p><a href="{% url 'login' %}"><button class="btn btn-default">Login</button></a></p>
+            {% endif %}
+
+    </div>
+</div>
+
+{% if collections %}
+<div class="row" style="padding-top:50px;">
+    <div class="col-md-12">
+        <span style='float:right'><a href="{% url 'search' %}"><i class="fa fa-search"></i></a></span>
+    </div>
+
+    {% if collections %}
+    <!-- Navigation to different groups of collections -->
+    <div class="col-md-12">
+        <div class="content"  style="padding-bottom:20px">
+                <a href="{% url 'collection_stars' %}"><button class="btn btn-sm btn-default">Top Collections</button></a> 
+                {% if page_title == "Container Collections" %}
+                <a href="{% url 'collections' %}"><button class="btn btn-sm btn-default" disabled>All Collections</button></a>
+                {% else %}
+                <a href="{% url 'collections' %}"><button class="btn btn-sm btn-default">All Collections</button></a>
+                {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="col-md-12" class="table card material-table mdl-data-table--selectable">
+        <table id="datatable" class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Builds</th>
+                <th></th>
+                <th>Private</th>
+                <th>Modified</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for collection in collections %}
+            <tr>
+               <td><a href="{% url 'collection_details' collection.id %}">{{ collection.name }}</a></td>
+               <td>{{ collection.containers.count }}</td>
+               <td>
+                   {% for name in collection.container_names|slice:":50" %}
+                      <a href="{% url 'search_query' name %}">{{ name }}{% if forloop.last %}{% else %},{% endif %}</a>
+                   {% endfor %}
+               </td>
+               <td style="width:15px">{% if collection.private %}Yes{% else %}No{% endif %}</td>
+               <td style="width:100px">{{ collection.modify_date|date:"Y-m-d"}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "js/jquery.dataTables.min.js"%}"></script>
+<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+<script src="{% static "js/materialize.min.js"%}"></script>
+<script src="{% static "js/material.datatables.js"%}"></script>
+<script>
+$(document).ready(function(){
+    // Hack until figure out why pagination ugly
+    $('.material-pagination').hide();
+
+    $('#collection_table').DataTable( {
+       pageLength: 100, 
+       columnDefs: [
+            {
+                targets: [ 1, 2, 3, 4, 5 ],
+                className: 'mdl-data-table__cell--non-numeric'
+            },
+          ],
+       columns: [
+            { "width": "20%" },
+            { "width": "30%" },
+            { "width": "15%" },
+            { "width": "15%" },
+            { "width": "20%" },
+            ]
+    } );
+
+
+    $(".browser-default").change(function(){
+        $('.material-pagination').hide();
+    })
+
+})
+</script>
+{% endblock %}
